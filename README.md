@@ -85,7 +85,7 @@ your new clipboard text is: 【【何同学】我做了一个自己打字的键�
 ## douyin
 
 ```
-$ java -jar link-cleaner-1.0.1.jar
+$ java -jar link-cleaner-v1.0.1.jar
 your original clipboard text is: 7.46 jcA:/ 复制打开抖音，看看【宽甸魔笛琴行的作品】中国足球 何日出头🤔# 足球的魅力远远超过你的想象... https://v.douyin.com/rHKxxxx/
 your new clipboard text is: 看看【宽甸魔笛琴行的作品】中国足球 何日出头🤔# 足球的魅力远远超过你的想象... https://www.douyin.com/video/7168098046780214580
 ```
