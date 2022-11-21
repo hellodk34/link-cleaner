@@ -82,6 +82,22 @@ your original clipboard text is: 【【何同学】我做了一个自己打字�
 your new clipboard text is: 【【何同学】我做了一个自己打字的键盘...】  https://www.bilibili.com/video/BV1W14y1b7Mq
 ```
 
+## douyin
+
+```
+$ java -jar link-cleaner-1.0.1.jar
+your original clipboard text is: 7.46 jcA:/ 复制打开抖音，看看【宽甸魔笛琴行的作品】中国足球 何日出头🤔# 足球的魅力远远超过你的想象... https://v.douyin.com/rHKxxxx/
+your new clipboard text is: 看看【宽甸魔笛琴行的作品】中国足球 何日出头🤔# 足球的魅力远远超过你的想象... https://www.douyin.com/video/7168098046780214580
+```
+
 源码在: https://github.com/hellodk34/link-cleaner 欢迎大家来添砖加瓦
 
 to be continued...
+
+----
+
+## 更新日志
+
+### v1.0.1
+
+2022-11-21 13:53:25, 1.0.1 版本的 jar 新增 site: douyin

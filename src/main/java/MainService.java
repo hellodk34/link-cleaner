@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class MainService {
     public static void main(String[] args) {
         MainService main = new MainService();
-        main.entry();
+        main.mainEntry();
     }
 
     private String pddGoodsUri(String url) {
@@ -54,6 +54,27 @@ public class MainService {
         return (text.length() == 0 ? "" : (text + " ")) + removeParams(uri);
     }
 
+    private String douyinUri(String url) {
+        String uri = url;
+        int startIndex = uri.indexOf("抖音，");
+        int httpsIndex = uri.indexOf("https");
+        String text = uri.substring(startIndex + 3, httpsIndex);
+        uri = uri.substring(httpsIndex);
+        HttpResponse resp = HttpRequest.head(uri).timeout(20000).execute();
+        String location = resp.header("Location");
+        String newLocation = removeParams(location);
+        String regex = "\\/(\\d+)\\/";
+        Pattern p = Pattern.compile(regex);
+        Matcher m = p.matcher(newLocation);
+        if (m.find()) {
+            String videoId = m.group(1);
+            String newUriTemplate = "https://www.douyin.com/video/%s";
+            String result = String.format(newUriTemplate, videoId);
+            return text + result;
+        }
+        return url;
+    }
+
     private String jdUri(String url) {
         return removeParams(url);
     }
@@ -68,31 +89,18 @@ public class MainService {
         if (uri.contains("taobao.com")) {
             return getTaobaocomUri(uri);
         }
-        if (containsChinese(uri)) {
-            int start = uri.indexOf("https");
-            int end = uri.indexOf(" ");
-            final String originUri = uri;
-            uri = uri.substring(start, end);
-            String text = originUri.substring(end);
-            return text + " " + getTaobaoDesktopUrl(uri);
-        }
-        else {
-            uri = uri.trim();
-            return getTaobaoDesktopUrl(uri);
-        }
-    }
-
-    private String getTaobaoDesktopUrl(String shortUrl) {
-        String result = HttpRequest.get(shortUrl).timeout(20000).execute().body();
+        int start = uri.indexOf("https");
+        int end = uri.indexOf(" ");
+        String goodName = uri.substring(end);
+        String realUri = uri.substring(start, end);
+        String result = HttpRequest.get(realUri).timeout(20000).execute().body();
         String regex = "var url = '([^\\r\\n]*)';";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(result);
         if (matcher.find()) {
-            result = matcher.group(1);
+            uri = matcher.group(1);
         }
-        return getTaobaocomUri(result);
-
-
+        return goodName + " " + getTaobaocomUri(uri);
     }
 
     private String getTaobaocomUri(String url) {
@@ -113,7 +121,7 @@ public class MainService {
         return id[0].concat("?").concat(param);
     }
 
-    private void entry() {
+    private void mainEntry() {
         String uri = getSysClipboard();
         String site = "";
         if (uri.contains("yangkeduo.com")) {
@@ -129,6 +137,11 @@ public class MainService {
             site = "bili";
         }
         // TODO 支持更多网站
+
+        // 2022-11-21 13:25:07 add site douyin
+        else if (uri.contains("douyin.com")) {
+            site = "douyin";
+        }
 
         if (ObjectUtil.isEmpty(site)) {
             System.out.println(uri + " not supported at the moment.");
@@ -147,8 +160,10 @@ public class MainService {
             case "bili":
                 result = biliUri(uri);
                 break;
+            case "douyin":
+                result = douyinUri(uri);
+                break;
             default:
-                //System.exit(0);
                 return;
         }
         setSysClipboard(result);
@@ -184,14 +199,5 @@ public class MainService {
         }
         System.out.println("your original clipboard text is: " + result);
         return result;
-    }
-
-    private Boolean containsChinese(String str) {
-        if (str == null) {
-            return false;
-        }
-        Pattern p = Pattern.compile("[\u4e00-\u9fa5]");
-        Matcher m = p.matcher(str);
-        return m.find();
     }
 }
