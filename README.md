@@ -100,5 +100,5 @@ to be continued...
 
 ### v1.0.1
 
-2022-11-21 13:53:25, 1.0.1 版本的 jar 新增 site: douyin
-2023-12-21 10:20:01，1.0.2 版本的 jar 新增 site: xiaohongshu
+- 2022-11-21 13:53:25, 1.0.1 版本的 jar 新增 site: douyin
+- 2023-12-21 10:20:01, 1.0.2 版本的 jar 新增 site: xiaohongshu
