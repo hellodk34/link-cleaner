@@ -75,6 +75,34 @@ public class MainService {
         return url;
     }
 
+    private String xiaohongshuUri(String text) {
+        String schemePrefix = null;
+        if (text.contains("http://")) {
+            schemePrefix = "http://";
+        }
+        else if (text.contains("https://")) {
+            schemePrefix = "https://";
+        }
+        else {
+            System.out.println(text + "is not supported now.");
+        }
+        int httpIndex = text.lastIndexOf(schemePrefix);
+        // 正则表达式匹配 URI
+        String regex = "(?<=http://|https://)[\\w\\d+./?=]+";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(text);
+
+        // 寻找匹配项并输出结果
+        if (matcher.find()) {
+            String uri = matcher.group();
+            HttpResponse resp = HttpRequest.head(schemePrefix + uri).timeout(20000).execute();
+            String location = resp.header("Location");
+            String cleanedUri = removeParams(location);
+            return text.substring(0, httpIndex) + " " + cleanedUri;
+        }
+        return "";
+    }
+
     private String jdUri(String url) {
         return removeParams(url);
     }
@@ -142,6 +170,10 @@ public class MainService {
         else if (uri.contains("douyin.com")) {
             site = "douyin";
         }
+        // 2023-12-21 09:21:50 add site: xiaohongshu
+        else if (uri.contains("xhslink.com")) {
+            site = "xiaohongshu";
+        }
 
         if (ObjectUtil.isEmpty(site)) {
             System.out.println(uri + " not supported at the moment.");
@@ -162,6 +194,9 @@ public class MainService {
                 break;
             case "douyin":
                 result = douyinUri(uri);
+                break;
+            case "xiaohongshu":
+                result = xiaohongshuUri(uri);
                 break;
             default:
                 return;
@@ -198,6 +233,7 @@ public class MainService {
             System.out.println("Transferable is null!");
         }
         System.out.println("your original clipboard text is: " + result);
+        System.out.print(System.lineSeparator());
         return result;
     }
 }
