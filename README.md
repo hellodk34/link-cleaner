@@ -98,7 +98,7 @@ to be continued...
 
 ## 更新日志
 
-### v1.0.0
+### v1.1.0
 
 - 适配 Linux Desktop，使本程序在linux桌面系统上也能工作。注意需要安装 xclip 软件包。
 
