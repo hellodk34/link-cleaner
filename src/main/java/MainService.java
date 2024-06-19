@@ -76,14 +76,12 @@ public class MainService {
     }
 
     private String xiaohongshuUri(String text) {
-        String schemePrefix = null;
+        String schemePrefix = "";
         if (text.contains("http://")) {
             schemePrefix = "http://";
-        }
-        else if (text.contains("https://")) {
+        } else if (text.contains("https://")) {
             schemePrefix = "https://";
-        }
-        else {
+        } else {
             System.out.println(text + "is not supported now.");
         }
         int httpIndex = text.lastIndexOf(schemePrefix);
@@ -154,14 +152,11 @@ public class MainService {
         String site = "";
         if (uri.contains("yangkeduo.com")) {
             site = "pdd";
-        }
-        else if (uri.contains("jd.com")) {
+        } else if (uri.contains("jd.com")) {
             site = "jd";
-        }
-        else if (uri.contains("taobao.com") || uri.contains("tb.cn")) {
+        } else if (uri.contains("taobao.com") || uri.contains("tb.cn")) {
             site = "taobao";
-        }
-        else if (uri.contains("bilibili.com") || uri.contains("b23.tv")) {
+        } else if (uri.contains("bilibili.com") || uri.contains("b23.tv")) {
             site = "bili";
         }
         // TODO 支持更多网站
@@ -206,9 +201,31 @@ public class MainService {
     }
 
     private void setSysClipboard(String myString) {
-        StringSelection stringSelection = new StringSelection(myString);
-        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        clipboard.setContents(stringSelection, null);
+        String osName = System.getProperty("os.name").toLowerCase();
+        if (osName.contains("linux")) {
+            setClipboardUsingXClipOnLinux(myString);
+        } else {
+            // Windows、macOS 可以持久化这个内容到系统剪贴板
+            StringSelection stringSelection = new StringSelection(myString);
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            clipboard.setContents(stringSelection, null);
+        }
+
+    }
+
+    private void setClipboardUsingXClipOnLinux(String text) {
+        // 加入 -n 选项以避免 echo 在末尾自动添加换行
+        String[] cmd = {"/bin/bash", "-c", "echo -n " + escape(text) + " | xclip -selection clipboard"};
+        try {
+            Runtime.getRuntime().exec(cmd);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    // 适当地转义文本中的特殊字符
+    private String escape(String text) {
+        return "'" + text.replace("'", "'\\''") + "'";
     }
 
     private String getSysClipboard() {
@@ -220,16 +237,13 @@ public class MainService {
             if (tr.isDataFlavorSupported(DataFlavor.stringFlavor)) {
                 try {
                     result = (String) tr.getTransferData(DataFlavor.stringFlavor);
+                } catch (UnsupportedFlavorException | IOException ex) {
+                    throw new RuntimeException(ex);
                 }
-                catch (UnsupportedFlavorException | IOException ex) {
-                    System.out.println(ex);
-                }
-            }
-            else {
+            } else {
                 System.out.println("only deal with text.");
             }
-        }
-        else {
+        } else {
             System.out.println("Transferable is null!");
         }
         System.out.println("your original clipboard text is: " + result);

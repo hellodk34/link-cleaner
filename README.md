@@ -98,7 +98,22 @@ to be continued...
 
 ## 更新日志
 
-### v1.0.1
+### v1.0.0
+
+- 适配 Linux Desktop，使本程序在linux桌面系统上也能工作。注意需要安装 xclip 软件包。
+
+```
+# deb 系
+$ sudo apt install -y xclip
+# rpm 系，下面两个命令一般二选一即可，老的 CentOS 可能还是 yum，较新的 Fedora 或者 Rocky Linux、OpenEuler 都可以直接使用 dnf
+$ sudo yum install -y xclip
+$ sudo dnf install -y xclip
+```
+
+### v1.0.2
 
 - 2022-11-21 13:53:25, 1.0.1 版本的 jar 新增 site: douyin
+
+### v1.0.1
+
 - 2023-12-21 10:20:01, 1.0.2 版本的 jar 新增 site: xiaohongshu
