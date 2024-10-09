@@ -19,6 +19,9 @@ import java.util.regex.Pattern;
  */
 
 public class MainService {
+
+    private static final String XHS_DOMAIN = "xiaohongshu.com";
+
     public static void main(String[] args) {
         MainService main = new MainService();
         main.mainEntry();
@@ -76,12 +79,31 @@ public class MainService {
     }
 
     private String xiaohongshuUri(String text) {
+        if (text.contains(XHS_DOMAIN)) {
+            String[] uriSplit = text.split("\\?");
+            if (uriSplit.length > 1) {
+                final int length = uriSplit.length;
+                StringBuilder firstPart = new StringBuilder();
+                for (int i = 0; i < (length - 1); i++) {
+                    firstPart.append(uriSplit[i]);
+                }
+                String secondPart = uriSplit[length - 1];
+                String[] params = secondPart.split("\\&");
+                for (String param : params) {
+                    if (param.contains("xsec_token")) {
+                        return firstPart.toString().concat("?").concat(param);
+                    }
+                }
+            }
+        }
         String schemePrefix = "";
         if (text.contains("http://")) {
             schemePrefix = "http://";
-        } else if (text.contains("https://")) {
+        }
+        else if (text.contains("https://")) {
             schemePrefix = "https://";
-        } else {
+        }
+        else {
             System.out.println(text + "is not supported now.");
         }
         int httpIndex = text.lastIndexOf(schemePrefix);
@@ -152,11 +174,14 @@ public class MainService {
         String site = "";
         if (uri.contains("yangkeduo.com")) {
             site = "pdd";
-        } else if (uri.contains("jd.com")) {
+        }
+        else if (uri.contains("jd.com")) {
             site = "jd";
-        } else if (uri.contains("taobao.com") || uri.contains("tb.cn")) {
+        }
+        else if (uri.contains("taobao.com") || uri.contains("tb.cn")) {
             site = "taobao";
-        } else if (uri.contains("bilibili.com") || uri.contains("b23.tv")) {
+        }
+        else if (uri.contains("bilibili.com") || uri.contains("b23.tv")) {
             site = "bili";
         }
         // TODO 支持更多网站
@@ -166,7 +191,7 @@ public class MainService {
             site = "douyin";
         }
         // 2023-12-21 09:21:50 add site: xiaohongshu
-        else if (uri.contains("xhslink.com")) {
+        else if (uri.contains("xhslink.com") || uri.contains(XHS_DOMAIN)) {
             site = "xiaohongshu";
         }
 
@@ -204,7 +229,8 @@ public class MainService {
         String osName = System.getProperty("os.name").toLowerCase();
         if (osName.contains("linux")) {
             setClipboardUsingXClipOnLinux(myString);
-        } else {
+        }
+        else {
             // Windows、macOS 可以持久化这个内容到系统剪贴板
             StringSelection stringSelection = new StringSelection(myString);
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -218,7 +244,8 @@ public class MainService {
         String[] cmd = {"/bin/bash", "-c", "echo -n " + escape(text) + " | xclip -selection clipboard"};
         try {
             Runtime.getRuntime().exec(cmd);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -237,13 +264,16 @@ public class MainService {
             if (tr.isDataFlavorSupported(DataFlavor.stringFlavor)) {
                 try {
                     result = (String) tr.getTransferData(DataFlavor.stringFlavor);
-                } catch (UnsupportedFlavorException | IOException ex) {
+                }
+                catch (UnsupportedFlavorException | IOException ex) {
                     throw new RuntimeException(ex);
                 }
-            } else {
+            }
+            else {
                 System.out.println("only deal with text.");
             }
-        } else {
+        }
+        else {
             System.out.println("Transferable is null!");
         }
         System.out.println("your original clipboard text is: " + result);

@@ -98,6 +98,10 @@ to be continued...
 
 ## 更新日志
 
+### v1.1.1
+
+小红书 web 获取的链接不再是 `http://xhslink.com` 的链接了，而是直接 `https://xiaohongshu.com` 的链接。但是链接带有很多参数，分享到微信直接打开需要带有 `xsec_token` 值，否则只能在小红书 app 中才能浏览笔记内容。于是本次更新带上这个更新。
+
 ### v1.1.0
 
 - 适配 Linux Desktop，使本程序在linux桌面系统上也能工作。注意需要安装 xclip 软件包。
