@@ -28,17 +28,13 @@ link cleaner, removing the track params of urls.
     my weixin id is: 12345678, shared on v2ex.com at 2022-08-25
 	```
 
-我已经养成了习惯，给别人分享东西时，基本上是分享标题 + 链接，如果是链接要看它干不干净。
+**我已经养成了习惯，给别人分享东西时，基本上是分享标题 + 链接，如果是链接要看它干不干净。**
 
-为此我用 Java 写了一个简单的应用，打包成了 jar，要使用的话安装 [OpenJDK11](https://www.injdk.cn/) 。
+为此我用 Java 写了一个简单的应用，打包成了 jar，使用 JDK11 构建。
 
 ## 用法
 
-复制从平台复制的链接，执行 **java -jar link-cleaner-1.0.0.jar**，**新的链接将会自动写入剪贴板，再粘贴即可**。我处理了 pdd、taobao、jd、bilibili 四个平台的链接。下面是一些例子。
-
-pdd，别人通过应用内分享给你的商品，你点击后会直接给你展示是谁分享的。如果是你分享的链接，被很多人通过微信转发了，会不会社死？所以隐私很重要。
-
-![拼多多极简白键帽分享带链接追踪功能-处理压缩后](https://image.940304.xyz/i/2022/08/25/630776655ec97.jpg)
+复制从平台复制的链接，执行 **java -jar link-cleaner-1.0.0.jar**，**新的链接将会自动写入剪贴板，再粘贴即可**。我处理了 pdd、taobao、jd、bilibili 等平台的链接。下面是一些例子：
 
 ## pdd
 
@@ -47,6 +43,10 @@ $ java -jar link-cleaner-1.0.0.jar
 your original clipboard text is: https://mobile.yangkeduo.com/goods.html?_x_org=2&refer_share_uin=KSFDGHKGUQXWTDO6DFD4JEM4II_GEXDA&_x_query=%E6%BA%90%E5%B7%A5%E4%B8%9A%E9%94%AE%E5%B8%BD&share_uin=KSFDGHKGUQXWTDO6DFD4JEM4II_GEXDA&page_from=23&_wv=41729&refer_share_channel=copy_link&refer_share_id=LJ8vv4WYAvYeEDzl5BqMr2rbJCLWiX9u&goods_id=28707795xxxx&pxq_secret_key=VGKR5MJG66CF7YSADPCIDC4OAA3ZUKSORF6SJAVHT3JXSROMIAGA&_wvx=10
 your new clipboard text is: https://mobile.yangkeduo.com/goods.html?goods_id=28707795xxxx
 ```
+
+在pdd，别人通过应用内分享给你的商品，你点击后会直接给你展示是谁分享的，而且还可能会显示“ta最近正在浏览这些商品”或类似，这极大的侵犯了个人隐私。
+
+![拼多多极简白键帽分享带链接追踪功能-处理压缩后](https://image.940304.xyz/i/2022/08/25/630776655ec97.jpg)
 
 ## taobao
 
@@ -94,9 +94,13 @@ your new clipboard text is: 看看【宽甸魔笛琴行的作品】中国足球 
 
 to be continued...
 
-----
+---
 
 ## 更新日志
+
+### v1.1.2
+- 增加了通用网址的识别和查询参数处理
+- 健壮了淘宝链接
 
 ### v1.1.1
 

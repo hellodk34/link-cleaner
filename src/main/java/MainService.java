@@ -22,6 +22,9 @@ public class MainService {
 
     private static final String XHS_DOMAIN = "xiaohongshu.com";
 
+    // 匹配 http / https URL
+    private static final Pattern URL_PATTERN = Pattern.compile("(https?://[^\\s]+)");
+
     public static void main(String[] args) {
         MainService main = new MainService();
         main.mainEntry();
@@ -157,6 +160,9 @@ public class MainService {
         if (split.length == 1) {
             return split[0];
         }
+        else if (split[0].contains("?") && split[0].contains("id=")) {
+            return split[0];
+        }
         String[] id = uri.split("\\?");
         String param = "";
         for (int i = 0; i < split.length; i++) {
@@ -184,7 +190,6 @@ public class MainService {
         else if (uri.contains("bilibili.com") || uri.contains("b23.tv")) {
             site = "bili";
         }
-        // TODO 支持更多网站
 
         // 2022-11-21 13:25:07 add site douyin
         else if (uri.contains("douyin.com")) {
@@ -194,7 +199,9 @@ public class MainService {
         else if (uri.contains("xhslink.com") || uri.contains(XHS_DOMAIN)) {
             site = "xiaohongshu";
         }
-
+        else if (uri.contains("http://") || uri.contains("https://")) {
+            site = "general";
+        }
         if (ObjectUtil.isEmpty(site)) {
             System.out.println(uri + " not supported at the moment.");
         }
@@ -217,6 +224,14 @@ public class MainService {
                 break;
             case "xiaohongshu":
                 result = xiaohongshuUri(uri);
+                break;
+            case "general":
+                //
+                /**
+                 * 属于是通用的移除 URI query params 逻辑，移除常规网址中的查询参数（只会替换文本中 URI 部分，不会影响别的内容）
+                 * 比如传入 "asdfafd 智能abc https://www.example.com/123.html?u=1" 会输出 "asdfafd 智能abc https://www.example.com/123.html"
+                 */
+                result = generalUriQueryParamsRemover(uri);
                 break;
             default:
                 return;
@@ -279,5 +294,36 @@ public class MainService {
         System.out.println("your original clipboard text is: " + result);
         System.out.print(System.lineSeparator());
         return result;
+    }
+
+    private String generalUriQueryParamsRemover(String text) {
+        if (text == null || text.isEmpty()) {
+            return text;
+        }
+
+        Matcher matcher = URL_PATTERN.matcher(text);
+        StringBuffer result = new StringBuffer();
+
+        while (matcher.find()) {
+            String url = matcher.group(1);
+
+            // 去掉 query 参数
+            String cleanedUrl = removeQueryParams(url);
+
+            // 替换原 URL
+            matcher.appendReplacement(result, Matcher.quoteReplacement(cleanedUrl));
+        }
+
+        matcher.appendTail(result);
+
+        return result.toString();
+    }
+
+    private String removeQueryParams(String url) {
+        int queryIndex = url.indexOf('?');
+        if (queryIndex == -1) {
+            return url;
+        }
+        return url.substring(0, queryIndex);
     }
 }
